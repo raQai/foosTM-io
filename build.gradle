@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'groovy'
+
+group = 'de.kongfoos'
+version = '1.0-SNAPSHOT'
+archivesBaseName = project.name
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+repositories {
+     mavenLocal()
+	 mavenCentral()
+	 jcenter()
+}
+
+jar {
+	manifest.attributes provider: 'Kong Foos'
+	manifest.attributes version: "$project.version"
+}
+
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version:'19.0'
+	compile 'org.slf4j:slf4j-api:1.7.13'
+	compile 'org.codehaus.groovy:groovy-all:2.3.+'
+	
+	compile 'de.kongfoos:foosTM-model:1.0-SNAPSHOT'
+}
