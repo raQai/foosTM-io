@@ -46,4 +46,5 @@ dependencies {
 //	compile group: 'org.eclipse.persistence', name: 'javax.persistence', version: '2.1.1'
 	
 	compile 'de.kongfoos:foosTM-model:1.0-SNAPSHOT'
+	compile 'de.kongfoos:foosTM-view:1.0-SNAPSHOT'
 }
