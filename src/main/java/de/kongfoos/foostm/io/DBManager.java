@@ -21,8 +21,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Singleton
-public class DbManager {
+public class DBManager {
 
+	public static final String CREATE_DROP = "create-drop";
+	public static final String UPDATE = "update";
+	
 	@Autowired
 	private ConfigurableApplicationContext appContext;
 
@@ -40,7 +43,7 @@ public class DbManager {
 	}
 
 	private LocalContainerEntityManagerFactoryBean createEntityManagerFactoryBean(
-			String dbName, String[] packagesToScan) {
+			String dbName, String[] packagesToScan, String openMode) {
 		DataSource dataSource = createDataSource(dbName);
 
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -53,7 +56,7 @@ public class DbManager {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect",
 				"org.hibernate.dialect.H2Dialect");
-		properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		properties.setProperty("hibernate.hbm2ddl.auto", openMode);
 		em.setJpaProperties(properties);
 
 		em.afterPropertiesSet();
@@ -64,11 +67,11 @@ public class DbManager {
 		return em;
 	}
 
-	public void openDatabase(String dbName, String[] packagesToScan) {
+	public void openDatabase(String dbName, String[] packagesToScan, String openMode) {
 		if (!factoryMap.containsKey(dbName)) {
 			// create factory
 			LocalContainerEntityManagerFactoryBean emf = createEntityManagerFactoryBean(
-					dbName, packagesToScan);
+					dbName, packagesToScan, openMode);
 
 			// register factory to context
 			ConfigurableListableBeanFactory registry = appContext
@@ -86,11 +89,16 @@ public class DbManager {
 	}
 
 	public void startWebServer(String dbName) {
-		try {
-			Server.startWebServer(getDataSource(dbName).getConnection());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		new Thread(){
+			@Override
+			public void run() {
+				try {
+					Server.startWebServer(getDataSource(dbName).getConnection());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
 	}
 
 }
