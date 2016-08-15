@@ -26,6 +26,15 @@ public class PlayerRepository {
 		em.getTransaction().commit();
 	}
 	
+	public void save(List<Player> playerList){
+		em.getTransaction().begin();
+		Session session = em.unwrap(Session.class);
+		for(Player p : playerList){
+			session.save(Player.class.getCanonicalName(), p);
+		}
+		em.getTransaction().commit();
+	}
+	
 	public Player findById(long id){
 		return em.find(Player.class, id);
 	}
