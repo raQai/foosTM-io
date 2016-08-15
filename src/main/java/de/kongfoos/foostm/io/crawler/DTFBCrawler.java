@@ -24,16 +24,16 @@ public class DTFBCrawler {
 	public List<Player> getAllPlayer() throws IOException{
 		List<Player> playerList = new ArrayList<Player>();
 
-		Map<String, String> clubs = getAllClubs();
-		for(String club : clubs.keySet()){
-			Map<String, String> playerURLs = getAllPlayerURLs(clubs.get(club));
+		Map<String, String> clubURLs = getAllClubURLs();
+		for(String clubName : clubURLs.keySet()){
+			Map<String, String> playerURLs = getAllPlayerURLs(clubURLs.get(clubName));
 			for(String playerName : playerURLs.keySet()){
-				List<String> playerInfo = getPlayerInfos(playerURLs.get(playerName));
+				List<String> playerInfo = getPlayerInfo(playerURLs.get(playerName));
 				String[] name = playerName.split(",");
 				Player p = new Player();
 				p.setSurname(name[0].trim());
 				p.setForename(name[1].trim());
-				p.setClub(club.trim());
+				p.setClub(clubName.trim());
 				p.setGender(parseGender(playerInfo.get(0)));
 				p.setDtfb(playerInfo.get(3).trim());
 				if( playerInfo.size() > 4 ){
@@ -47,10 +47,10 @@ public class DTFBCrawler {
 	}
 
 	/**
-	 * @return map with all club names as key and links as values
+	 * @return map with all club names as key and links as value
 	 * @throws IOException 
 	 * */
-	private Map<String, String> getAllClubs() throws IOException{
+	private Map<String, String> getAllClubURLs() throws IOException{
 		Map<String, String> clubs = new HashMap<String, String>();
 		
 		Document doc = getDocumentFromURL(URL_DTFB_CLUBS);
@@ -63,6 +63,10 @@ public class DTFBCrawler {
 		return clubs;
 	}
 	
+	/**
+	 * @return map with all player names as key and links as value
+	 * @throws IOException 
+	 * */
 	private Map<String, String> getAllPlayerURLs(String clubURL) throws IOException{
 		Map<String, String> player = new HashMap<String, String>();
 		
@@ -76,7 +80,7 @@ public class DTFBCrawler {
 		return player;
 	}
 	
-	private List<String> getPlayerInfos(String playerURL) throws IOException{
+	private List<String> getPlayerInfo(String playerURL) throws IOException{
 		List<String> infos = new ArrayList<String>();
 		
 		Document doc = getDocumentFromURL(playerURL);
@@ -94,7 +98,7 @@ public class DTFBCrawler {
 			return Gender.MALE;
 		}
 		else if( gender.contains("Damen") ){
-			return Gender.MALE;
+			return Gender.FEMALE;
 		}
 		// TODO is there a default?
 		return Gender.MALE;
