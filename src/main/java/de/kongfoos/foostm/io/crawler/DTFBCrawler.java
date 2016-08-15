@@ -28,7 +28,6 @@ public class DTFBCrawler {
 		for(String club : clubs.keySet()){
 			Map<String, String> playerURLs = getAllPlayerURLs(clubs.get(club));
 			for(String playerName : playerURLs.keySet()){
-				System.out.println(playerURLs.get(playerName));
 				List<String> playerInfo = getPlayerInfos(playerURLs.get(playerName));
 				String[] name = playerName.split(",");
 				Player p = new Player();
